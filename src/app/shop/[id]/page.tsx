@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import { notFound, useParams } from "next/navigation";
 import Link from "next/link";
-import { PRODUCTS, TESTIMONIALS } from "@/data/products";
+import { PRODUCTS } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { formatPKR, buildWhatsAppOrderUrl, VERIFIED_STORE_INFO } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { ProductCard } from "@/components/product/ProductCard";
+import { ProductReviews } from "@/components/product/ProductReviews";
 import {
   Star,
   ShoppingBag,
@@ -411,48 +412,13 @@ export default function ProductDetailPage() {
             )}
 
             {activeTab === "reviews" && (
-              <div className="space-y-6 max-w-3xl">
-                <div className="p-5 bg-slate-50 rounded-2xl flex items-center justify-between">
-                  <div>
-                    <span className="text-3xl font-black text-slate-900 font-display">
-                      {product.rating} / 5.0
-                    </span>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      Based on {product.reviewsCount} verified purchase reviews
-                    </p>
-                  </div>
-                  <button
-                    onClick={() =>
-                      showToast("Review Feature", "Reviews are enabled for verified delivered orders.")
-                    }
-                    className="bg-brand-900 text-white font-bold text-xs py-2 px-4 rounded-xl shadow"
-                  >
-                    Write a Review
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  {TESTIMONIALS.map((t) => (
-                    <div key={t.id} className="p-4 border border-slate-200 rounded-2xl space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-900">{t.author}</span>
-                          <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">
-                            Verified Buyer
-                          </span>
-                        </div>
-                        <div className="flex text-amber-400 text-xs">
-                          {[...Array(t.rating)].map((_, i) => (
-                            <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
-                          ))}
-                        </div>
-                      </div>
-                      <h5 className="text-xs font-bold text-slate-800">{t.title}</h5>
-                      <p className="text-xs text-slate-600 leading-relaxed">{t.comment}</p>
-                      <span className="text-[10px] text-slate-400 block">{t.date} • {t.city}, Pakistan</span>
-                    </div>
-                  ))}
-                </div>
+              <div className="max-w-4xl">
+                <ProductReviews
+                  productId={product.id}
+                  productName={product.name}
+                  initialRating={product.rating || 5}
+                  initialReviewsCount={product.reviewsCount || 0}
+                />
               </div>
             )}
           </div>
