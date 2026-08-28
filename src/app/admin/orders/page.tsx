@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { formatPKR, VERIFIED_STORE_INFO } from "@/lib/utils";
 import {
@@ -287,6 +288,16 @@ export default function AdminOrdersPage() {
                       <option value="cancelled">Cancelled</option>
                     </select>
 
+                    <Link
+                      href={`/orders/${ord.orderNumber}/invoice`}
+                      target="_blank"
+                      className="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-xl border border-slate-200 transition-colors"
+                      title="View / Print Tax Invoice"
+                    >
+                      <Printer className="w-3.5 h-3.5" />
+                      <span>Invoice</span>
+                    </Link>
+
                     <button
                       onClick={() => setExpandedOrderId(isExpanded ? null : ord.id)}
                       className="p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-50"
@@ -385,8 +396,17 @@ export default function AdminOrdersPage() {
                           )}
                         </div>
 
-                        {/* WhatsApp Order Confirmation Link */}
+                        {/* WhatsApp Order Confirmation Link & Invoice Link */}
                         <div className="space-y-2">
+                          <Link
+                            href={`/orders/${ord.orderNumber}/invoice`}
+                            target="_blank"
+                            className="w-full flex items-center justify-center gap-2 bg-brand-900 hover:bg-brand-800 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-sm transition-colors"
+                          >
+                            <Printer className="w-4 h-4" />
+                            <span>View / Print Official Tax Invoice (A4)</span>
+                          </Link>
+
                           <a
                             href={customerWhatsAppLink}
                             target="_blank"

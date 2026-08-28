@@ -163,11 +163,8 @@ describe("Customer Reviews API & Interactive Component", () => {
 
       // Verify loading disappears and reviews load
       await waitFor(() => {
-        expect(screen.getByTestId("average-rating")).toBeInTheDocument();
+        expect(screen.getByTestId("average-rating")).toHaveTextContent("4.7");
       });
-
-      // Average rating: (5 + 4 + 5) / 3 = 4.666 -> 4.7
-      expect(screen.getByTestId("average-rating").textContent).toBe("4.7");
 
       // Verify distribution breakdown
       // Total 3 reviews: 2 five-star (67%), 1 four-star (33%), 0 three-star (0%), 0 two-star (0%), 0 one-star (0%)
@@ -347,15 +344,21 @@ describe("Customer Reviews API & Interactive Component", () => {
 
       fireEvent.click(screen.getByTestId("write-review-btn"));
 
-      const user = userEvent.setup();
-      await user.type(screen.getByLabelText(/Your Name \*/i), "Maham Tariq");
-      await user.type(screen.getByLabelText(/City \(Pakistan\)/i), "Rawalpindi");
-      await user.type(screen.getByLabelText(/Pet's Name & Breed/i), "Fluffy");
-      await user.type(screen.getByLabelText(/Review Headline \/ Title \*/i), "Best purchase for my kitten!");
-      await user.type(
-        screen.getByLabelText(/Detailed Feedback \*/i),
-        "She loves to sleep on it everyday. Super soft fabric!"
-      );
+      fireEvent.change(screen.getByLabelText(/Your Name \*/i), {
+        target: { value: "Maham Tariq" },
+      });
+      fireEvent.change(screen.getByLabelText(/City \(Pakistan\)/i), {
+        target: { value: "Rawalpindi" },
+      });
+      fireEvent.change(screen.getByLabelText(/Pet's Name & Breed/i), {
+        target: { value: "Fluffy" },
+      });
+      fireEvent.change(screen.getByLabelText(/Review Headline \/ Title \*/i), {
+        target: { value: "Best purchase for my kitten!" },
+      });
+      fireEvent.change(screen.getByLabelText(/Detailed Feedback \*/i), {
+        target: { value: "She loves to sleep on it everyday. Super soft fabric!" },
+      });
 
       // Click star 5
       const star5Btn = screen.getByRole("button", { name: /Rate 5 stars/i });

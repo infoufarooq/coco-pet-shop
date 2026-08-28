@@ -14,6 +14,8 @@ import {
   X,
   Sparkles,
   RotateCcw,
+  AlertTriangle,
+  Boxes,
 } from "lucide-react";
 
 export default function AdminProductsPage() {
@@ -32,6 +34,7 @@ export default function AdminProductsPage() {
     price: "",
     originalPrice: "",
     discountPercent: "",
+    stockQuantity: "20",
     category: CATEGORIES[0].name,
     categorySlug: CATEGORIES[0].slug,
     petType: "all",
@@ -68,6 +71,7 @@ export default function AdminProductsPage() {
       price: "",
       originalPrice: "",
       discountPercent: "",
+      stockQuantity: "20",
       category: CATEGORIES[0].name,
       categorySlug: CATEGORIES[0].slug,
       petType: "all",
@@ -81,12 +85,14 @@ export default function AdminProductsPage() {
   };
 
   const handleOpenEditModal = (product: Product) => {
+    const currentStock = product.stockQuantity ?? product.stockCount ?? 20;
     setEditingProduct(product);
     setFormData({
       name: product.name,
       price: String(product.price),
       originalPrice: product.originalPrice ? String(product.originalPrice) : "",
       discountPercent: product.discountPercent ? String(product.discountPercent) : "",
+      stockQuantity: String(currentStock),
       category: product.category,
       categorySlug: product.categorySlug,
       petType: product.petType,
@@ -106,17 +112,21 @@ export default function AdminProductsPage() {
       return;
     }
 
+    const stockNum = Math.max(0, parseInt(formData.stockQuantity, 10) || 0);
+
     const payload = {
       name: formData.name,
       price: Number(formData.price),
       originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
       discountPercent: formData.discountPercent ? Number(formData.discountPercent) : undefined,
+      stockQuantity: stockNum,
+      stockCount: stockNum,
       category: formData.category,
       categorySlug: formData.categorySlug,
       petType: formData.petType,
       images: [formData.imageUrl || "https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=600&q=80"],
       description: formData.description,
-      inStock: formData.inStock,
+      inStock: stockNum > 0 && formData.inStock,
       isBestSeller: formData.isBestSeller,
       isOnSale: formData.isOnSale,
     };
@@ -148,12 +158,33 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleToggleStock = async (product: Product) => {
-    const newStock = !product.inStock;
+  const handleQuickReplenish = async (product: Product, amount: number = 10) => {
+    const currentStock = product.stockQuantity ?? product.stockCount ?? 0;
+    const newStock = Math.max(0, currentStock + amount);
     await fetch(`/api/products/${product.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ inStock: newStock }),
+      body: JSON.stringify({
+        stockQuantity: newStock,
+        stockCount: newStock,
+        inStock: newStock > 0,
+      }),
+    });
+    fetchProducts();
+  };
+
+  const handleToggleStock = async (product: Product) => {
+    const currentStock = product.stockQuantity ?? product.stockCount ?? 0;
+    const newInStock = !product.inStock;
+    const newStock = newInStock ? (currentStock > 0 ? currentStock : 20) : 0;
+    await fetch(`/api/products/${product.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        inStock: newInStock,
+        stockQuantity: newStock,
+        stockCount: newStock,
+      }),
     });
     fetchProducts();
   };
@@ -290,16 +321,57 @@ export default function AdminProductsPage() {
                       )}
                     </td>
                     <td className="py-3.5 px-4">
-                      <button
-                        onClick={() => handleToggleStock(prod)}
-                        className={`text-[10px] font-bold px-2.5 py-1 rounded-full transition-colors ${
-                          prod.inStock
-                            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                            : "bg-rose-50 text-rose-700 hover:bg-rose-100"
-                        }`}
-                      >
-                        {prod.inStock ? "● In Stock" : "● Out of Stock"}
-                      </button>
+                      {(() => {
+                        const stockQty = prod.stockQuantity ?? prod.stockCount ?? 0;
+                        const isOutOfStock = !prod.inStock || stockQty <= 0;
+                        const isLowStock = prod.inStock && stockQty > 0 && stockQty <= 5;
+
+                        return (
+                          <div className="space-y-1.5">
+                            <div>
+                              {isOutOfStock ? (
+                                <span
+                                  data-testid={`stock-badge-${prod.id}`}
+                                  className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200"
+                                >
+                                  ● Out of Stock (0)
+                                </span>
+                              ) : isLowStock ? (
+                                <span
+                                  data-testid={`stock-badge-${prod.id}`}
+                                  className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200"
+                                >
+                                  ● Low Stock ({stockQty} left)
+                                </span>
+                              ) : (
+                                <span
+                                  data-testid={`stock-badge-${prod.id}`}
+                                  className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                >
+                                  ● In Stock ({stockQty} units)
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                onClick={() => handleQuickReplenish(prod, 10)}
+                                data-testid={`replenish-btn-${prod.id}`}
+                                className="text-[10px] font-bold bg-slate-100 hover:bg-brand-900 hover:text-white text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 transition-colors"
+                                title="Quick replenish: Add +10 stock"
+                              >
+                                +10 Stock
+                              </button>
+                              <button
+                                onClick={() => handleToggleStock(prod)}
+                                className="text-[10px] font-bold text-slate-400 hover:text-slate-700 underline"
+                              >
+                                {prod.inStock ? "Set 0" : "Restore"}
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </td>
                     <td className="py-3.5 px-4 text-right space-x-1">
                       <button
@@ -360,7 +432,7 @@ export default function AdminProductsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <label className="block font-bold text-slate-800 uppercase tracking-wider mb-1">
                     Price (PKR) *
@@ -397,6 +469,21 @@ export default function AdminProductsPage() {
                     value={formData.discountPercent}
                     onChange={(e) => setFormData({ ...formData, discountPercent: e.target.value })}
                     placeholder="15"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:border-brand-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-800 uppercase tracking-wider mb-1">
+                    Stock Qty *
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    required
+                    value={formData.stockQuantity}
+                    onChange={(e) => setFormData({ ...formData, stockQuantity: e.target.value })}
+                    placeholder="20"
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:border-brand-900"
                   />
                 </div>

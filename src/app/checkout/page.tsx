@@ -16,6 +16,8 @@ import {
   Sparkles,
   ShoppingBag,
   Home,
+  Printer,
+  FileText,
 } from "lucide-react";
 
 export default function CheckoutPage() {
@@ -194,17 +196,33 @@ export default function CheckoutPage() {
 
             {/* Actions */}
             <div className="space-y-3 pt-2">
+              <Link
+                href={`/orders/${completedOrder.orderNumber}/invoice`}
+                className="w-full flex items-center justify-center gap-2 bg-brand-900 hover:bg-brand-800 text-white font-extrabold text-xs sm:text-sm py-3.5 px-6 rounded-2xl shadow-lg transition-all"
+              >
+                <Printer className="w-4 h-4" />
+                <span>View &amp; Print Official Tax Invoice (A4)</span>
+              </Link>
+
               <a
                 href={confirmationWhatsAppUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm py-4 px-6 rounded-2xl shadow-lg transition-all"
+                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm py-3.5 px-6 rounded-2xl shadow-lg transition-all"
               >
-                <MessageSquare className="w-5 h-5 text-emerald-100" />
+                <MessageSquare className="w-4 h-4 text-emerald-100" />
                 <span>Notify CoCo & Candy on WhatsApp (Fast-Track Dispatch)</span>
               </a>
 
               <div className="flex items-center justify-center gap-4 pt-2">
+                <Link
+                  href={`/orders/${completedOrder.orderNumber}/invoice`}
+                  className="text-xs font-bold text-slate-700 hover:text-brand-900 hover:underline inline-flex items-center gap-1"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Tax Invoice</span>
+                </Link>
+                <span className="text-slate-300">•</span>
                 <Link
                   href={`/track-order`}
                   className="text-xs font-bold text-brand-900 hover:underline"
