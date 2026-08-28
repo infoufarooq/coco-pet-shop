@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { couponSchema } from "@/lib/validations";
+import { logger } from "@/lib/logger";
 
 export async function GET() {
   const coupons = db.getCoupons();
@@ -9,24 +11,34 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    if (!body.code || !body.discountPercent) {
+    const parseResult = couponSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      logger.warn("Coupon creation validation failed", { errors: parseResult.error.flatten() });
       return NextResponse.json(
-        { success: false, error: "Coupon code and discount percent are required." },
+        {
+          success: false,
+          error: "Invalid coupon data.",
+          details: parseResult.error.flatten(),
+        },
         { status: 400 }
       );
     }
 
+    const validData = parseResult.data;
     const newCoupon = db.addCoupon({
-      code: body.code,
-      discountPercent: Number(body.discountPercent),
-      description: body.description || `${body.discountPercent}% off storewide`,
-      minSpend: body.minSpend ? Number(body.minSpend) : undefined,
-      isActive: body.isActive !== false,
-      expiresAt: body.expiresAt || undefined,
+      code: validData.code,
+      discountPercent: validData.discountPercent,
+      description: validData.description || `${validData.discountPercent}% off storewide`,
+      minSpend: validData.minSpend || 0,
+      isActive: validData.isActive !== false,
+      expiresAt: validData.expiresAt || undefined,
     });
 
+    logger.info("Coupon created successfully", { code: newCoupon.code, discountPercent: newCoupon.discountPercent });
     return NextResponse.json({ success: true, data: newCoupon }, { status: 201 });
   } catch (error: any) {
+    logger.error("Coupon creation error", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

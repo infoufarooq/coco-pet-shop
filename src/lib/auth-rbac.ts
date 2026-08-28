@@ -76,7 +76,10 @@ export const SEED_STAFF_USERS: UserProfile[] = [
     phone: "03457913191",
     role: "order_packer",
     isPhoneVerified: true,
-    city: "Lahore",
     createdAt: new Date().toISOString(),
   },
 ];
+
+export function hasPermission(role: UserRole, permission: keyof PermissionSet): boolean {
+  return Boolean(ROLE_PERMISSIONS[role]?.[permission]);
+}

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { orderSchema } from "@/lib/validations";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -28,33 +30,43 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    if (!body.customerName || !body.customerPhone || !body.customerAddress || !body.items?.length) {
+    const parseResult = orderSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      logger.warn("Order creation validation failed", { errors: parseResult.error.flatten() });
       return NextResponse.json(
-        { success: false, error: "Missing required order information." },
+        {
+          success: false,
+          error: "Invalid order data.",
+          details: parseResult.error.flatten(),
+        },
         { status: 400 }
       );
     }
 
+    const validData = parseResult.data;
     const newOrder = db.createOrder({
-      customerName: body.customerName,
-      customerPhone: body.customerPhone,
-      customerWhatsApp: body.customerWhatsApp || body.customerPhone,
-      customerEmail: body.customerEmail || "",
-      customerAddress: body.customerAddress,
-      customerCity: body.customerCity || "Lahore",
-      customerNotes: body.customerNotes || "",
-      paymentMethod: body.paymentMethod || "cod",
+      customerName: validData.customerName,
+      customerPhone: validData.customerPhone,
+      customerWhatsApp: validData.customerWhatsApp || validData.customerPhone,
+      customerEmail: validData.customerEmail || "",
+      customerAddress: validData.customerAddress,
+      customerCity: validData.customerCity,
+      customerNotes: validData.customerNotes || "",
+      paymentMethod: validData.paymentMethod,
       status: "pending",
-      items: body.items,
-      subtotal: Number(body.subtotal) || 0,
-      discount: Number(body.discount) || 0,
-      shipping: Number(body.shipping) || 0,
-      total: Number(body.total) || 0,
-      couponCode: body.couponCode || undefined,
+      items: validData.items,
+      subtotal: validData.subtotal,
+      discount: validData.discount || 0,
+      shipping: validData.shipping || 0,
+      total: validData.total,
+      couponCode: validData.couponCode || undefined,
     });
 
+    logger.info("Order created successfully", { orderNumber: newOrder.orderNumber });
     return NextResponse.json({ success: true, data: newOrder }, { status: 201 });
   } catch (error: any) {
+    logger.error("Order creation error", error);
     return NextResponse.json(
       { success: false, error: error.message || "Failed to create order." },
       { status: 500 }
