@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { formatPKR, buildWhatsAppOrderUrl } from "@/lib/utils";
 import {
   Star,
@@ -20,7 +21,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
-  const { addToCart, toggleWishlist, isInWishlist, openQuickView } = useCart();
+  const { addToCart, openQuickView } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const isWishlisted = isInWishlist(product.id);
 
   const defaultVariant = product.variants?.options[0]

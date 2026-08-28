@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -20,6 +20,7 @@ import {
   FileText,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -27,7 +28,8 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ isOpen, onClose }: MobileNavProps) {
-  const { cartCount, wishlist } = useCart();
+  const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
 
   if (!isOpen) return null;
@@ -86,7 +88,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
             className="flex items-center justify-center gap-1.5 p-2 bg-white rounded-xl border border-slate-200 text-slate-800 shadow-sm"
           >
             <Heart className="w-4 h-4 text-rose-500" />
-            <span>Wishlist ({wishlist.length})</span>
+            <span>Wishlist ({wishlistCount})</span>
           </Link>
         </div>
 

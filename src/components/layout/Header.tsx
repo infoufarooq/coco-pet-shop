@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { useAuth } from "@/context/AuthContext";
 import { CATEGORIES } from "@/data/categories";
 import { PRODUCTS } from "@/data/products";
@@ -26,9 +27,9 @@ import {
 
 export function Header() {
   const router = useRouter();
-  const { cartCount, wishlist, openCart, subtotal } = useCart();
+  const { cartCount, openCart, subtotal } = useCart();
+  const { wishlistCount } = useWishlist();
   const { user } = useAuth();
-  const wishlistCount = wishlist.length;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
