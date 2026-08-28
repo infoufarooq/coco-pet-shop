@@ -17,6 +17,7 @@ import {
   Heart,
   ExternalLink,
   Package,
+  User,
 } from "lucide-react";
 
 export function Footer() {
@@ -41,7 +42,7 @@ export function Footer() {
             </div>
 
             <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-              Pakistan&apos;s trusted pet store providing orthopedic memory foam beds, wholesome nutrition, cozy designer clothes, raised bowls, and interactive chew toys.
+              Pakistan&apos;s premier pet boutique for orthopedic memory foam beds, wholesome nutrition, winter jackets, elevated bowls, and active toys.
             </p>
 
             <div className="pt-2 space-y-2 text-xs text-slate-300">
@@ -51,19 +52,32 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                <span>{VERIFIED_STORE_INFO.phone}</span>
+                <span>Call / WhatsApp: {VERIFIED_STORE_INFO.phone}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-amber-400 flex-shrink-0" />
                 <span>{VERIFIED_STORE_INFO.email}</span>
               </div>
             </div>
+
+            {/* Facebook Badge */}
+            <div className="pt-2">
+              <a
+                href={VERIFIED_STORE_INFO.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border border-[#1877F2]/40 text-blue-300 text-xs font-bold px-3.5 py-1.5 rounded-full transition-colors"
+              >
+                <span>f</span>
+                <span>Follow @cocopets on Facebook (15K+ Community)</span>
+              </a>
+            </div>
           </div>
 
           {/* Quick Categories */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white font-display">
-              Shop Categories
+              Shop Collections
             </h4>
             <ul className="space-y-2 text-xs">
               {CATEGORIES.map((cat) => (
@@ -82,13 +96,19 @@ export function Footer() {
           {/* Customer Care & Policies */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white font-display">
-              Help & Policies
+              Help & Accounts
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
+                <Link href="/account" className="hover:text-amber-400 text-white font-semibold transition-colors flex items-center gap-1">
+                  <User className="w-3.5 h-3.5 text-amber-400" />
+                  <span>My Account & Orders</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/track-order" className="hover:text-amber-400 text-amber-300 font-semibold transition-colors flex items-center gap-1">
                   <Package className="w-3.5 h-3.5" />
-                  <span>Track Your Order</span>
+                  <span>Track Parcel Online</span>
                 </Link>
               </li>
               <li>
@@ -98,7 +118,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/contact" className="hover:text-amber-400 transition-colors">
-                  Contact Us
+                  Contact Customer Care
                 </Link>
               </li>
               <li>
@@ -116,21 +136,16 @@ export function Footer() {
                   7-Day Return Policy
                 </Link>
               </li>
-              <li>
-                <Link href="/policies/privacy" className="hover:text-amber-400 transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
             </ul>
           </div>
 
-          {/* Admin & Social */}
+          {/* WhatsApp Direct & Admin Portal */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white font-display">
-              Store Support
+              Instant Support
             </h4>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Order directly through WhatsApp with instant confirmation.
+              Order directly via WhatsApp with instant customer assistance.
             </p>
 
             <a
@@ -140,7 +155,7 @@ export function Footer() {
               className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-colors shadow"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>WhatsApp Support</span>
+              <span>WhatsApp: 0345-7913191</span>
             </a>
 
             <div className="pt-3">
@@ -166,7 +181,7 @@ export function Footer() {
               Direct Bank Transfer
             </span>
             <span className="bg-slate-900 border border-slate-800 text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-md">
-              WhatsApp Orders
+              WhatsApp 03457913191
             </span>
           </div>
         </div>

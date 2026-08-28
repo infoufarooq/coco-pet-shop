@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
@@ -12,7 +12,7 @@ import {
   MessageSquare,
   Send,
   CheckCircle2,
-  HelpCircle,
+  ExternalLink,
 } from "lucide-react";
 
 export default function ContactPage() {
@@ -75,7 +75,7 @@ export default function ContactPage() {
                     Message Sent Successfully!
                   </h3>
                   <p className="text-xs text-emerald-800 max-w-sm mx-auto">
-                    We have received your message and will respond via email or WhatsApp within a few hours.
+                    We have received your message and will respond via email (<strong>{VERIFIED_STORE_INFO.email}</strong>) or WhatsApp (<strong>{VERIFIED_STORE_INFO.phone}</strong>) within a few hours.
                   </p>
                   <button
                     onClick={() => setIsSent(false)}
@@ -125,7 +125,7 @@ export default function ContactPage() {
                         type="tel"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="0300 1234567"
+                        placeholder="0345 7913191"
                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-brand-900"
                       />
                     </div>
@@ -183,7 +183,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-extrabold text-base font-display">Instant WhatsApp Support</h3>
-                    <p className="text-xs text-emerald-100">Live chat with pet care team</p>
+                    <p className="text-xs text-emerald-100">Live chat with pet care specialists</p>
                   </div>
                 </div>
 
@@ -198,37 +198,29 @@ export default function ContactPage() {
                   className="inline-flex items-center justify-center gap-2 w-full bg-white hover:bg-emerald-50 text-emerald-950 font-black text-xs py-3.5 px-4 rounded-2xl shadow transition-colors"
                 >
                   <MessageSquare className="w-4 h-4 text-emerald-600" />
-                  <span>Open WhatsApp Chat ({VERIFIED_STORE_INFO.whatsappDisplay})</span>
+                  <span>Open WhatsApp Chat ({VERIFIED_STORE_INFO.phone})</span>
                 </a>
               </div>
 
               {/* Verified Location & Hours Card */}
               <div className="bg-white rounded-4xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-4 text-xs sm:text-sm">
                 <h3 className="text-base font-bold text-slate-900 font-display pb-3 border-b border-slate-100">
-                  Store Details & Hub
+                  Verified Contact Details
                 </h3>
 
                 <div className="space-y-3 text-slate-600">
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-slate-900 block">Fulfillment Center & Store:</strong>
+                      <strong className="text-slate-900 block">Fulfillment Hub:</strong>
                       <span>{VERIFIED_STORE_INFO.address}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <strong className="text-slate-900 block">Business & Support Hours:</strong>
-                      <span>{VERIFIED_STORE_INFO.businessHours}</span>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
                     <Phone className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-slate-900 block">Helpline:</strong>
+                      <strong className="text-slate-900 block">Phone & WhatsApp:</strong>
                       <span>{VERIFIED_STORE_INFO.phone}</span>
                     </div>
                   </div>
@@ -236,10 +228,31 @@ export default function ContactPage() {
                   <div className="flex items-start gap-3">
                     <Mail className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-slate-900 block">Support Email:</strong>
+                      <strong className="text-slate-900 block">Email:</strong>
                       <span>{VERIFIED_STORE_INFO.email}</span>
                     </div>
                   </div>
+
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-slate-900 block">Support Hours:</strong>
+                      <span>{VERIFIED_STORE_INFO.businessHours}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Facebook Link */}
+                <div className="pt-3 border-t border-slate-100">
+                  <a
+                    href={VERIFIED_STORE_INFO.facebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs font-bold text-[#1877F2] hover:underline"
+                  >
+                    <span>Follow us on Facebook (@cocopets)</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
                 </div>
               </div>
             </div>

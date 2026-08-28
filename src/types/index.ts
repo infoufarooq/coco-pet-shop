@@ -1,3 +1,32 @@
+export type UserRole = "admin" | "catalog_manager" | "order_packer" | "customer";
+
+export interface PermissionSet {
+  canViewDashboard: boolean;
+  canManageCatalog: boolean;
+  canUpdateStockAndPrice: boolean;
+  canAcceptOrders: boolean;
+  canPackOrders: boolean;
+  canDispatchOrders: boolean;
+  canSendWhatsAppConfirmation: boolean;
+  canManageCoupons: boolean;
+  canManageStaff: boolean;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  isPhoneVerified?: boolean;
+  whatsappVerifiedAt?: string;
+  role: UserRole;
+  petName?: string;
+  petType?: "dog" | "cat" | "both" | "other";
+  city?: string;
+  address?: string;
+  createdAt: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -12,7 +41,7 @@ export interface Product {
   reviewsCount: number;
   inStock: boolean;
   stockCount?: number;
-  petType: 'dog' | 'cat' | 'all';
+  petType: "dog" | "cat" | "all";
   featured?: boolean;
   isNew?: boolean;
   isBestSeller?: boolean;
@@ -23,7 +52,7 @@ export interface Product {
   ingredientsOrMaterials?: string[];
   usageInstructions?: string;
   variants?: {
-    type: 'size' | 'flavor' | 'color' | 'weight';
+    type: "size" | "flavor" | "color" | "weight";
     options: {
       label: string;
       value: string;
@@ -70,6 +99,40 @@ export interface Coupon {
   expiresAt?: string;
 }
 
+export interface OrderRecord {
+  id: string;
+  orderNumber: string;
+  createdAt: string;
+  customerName: string;
+  customerPhone: string;
+  customerWhatsApp?: string;
+  customerEmail?: string;
+  customerAddress: string;
+  customerCity: string;
+  customerNotes?: string;
+  paymentMethod: "cod" | "bank_transfer" | "whatsapp";
+  status: "pending" | "confirmed" | "dispatched" | "delivered" | "cancelled";
+  packingStatus?: "unpacked" | "in_packing" | "packed" | "ready_to_ship";
+  packedBy?: string;
+  packedAt?: string;
+  acceptedBy?: string;
+  acceptedAt?: string;
+  items: {
+    productId: string;
+    productName: string;
+    image: string;
+    quantity: number;
+    price: number;
+    variantLabel?: string;
+    isPacked?: boolean;
+  }[];
+  subtotal: number;
+  discount: number;
+  shipping: number;
+  total: number;
+  couponCode?: string;
+}
+
 export interface OrderDetails {
   customerName: string;
   phone: string;
@@ -79,7 +142,7 @@ export interface OrderDetails {
   city: string;
   postalCode?: string;
   notes?: string;
-  paymentMethod: 'cod' | 'bank_transfer' | 'whatsapp';
+  paymentMethod: "cod" | "bank_transfer" | "whatsapp";
   items: CartItem[];
   subtotal: number;
   discount: number;

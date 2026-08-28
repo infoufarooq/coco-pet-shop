@@ -1,7 +1,8 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
@@ -31,6 +32,7 @@ export const metadata: Metadata = {
   keywords: [
     "CoCo and Candy",
     "Coco Pet Shop Pakistan",
+    "cocopets",
     "pet accessories shop",
     "dog food lahore",
     "cat food karachi",
@@ -58,11 +60,6 @@ export const metadata: Metadata = {
       },
     ],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: `${VERIFIED_STORE_INFO.name} | Pet Accessories Pakistan`,
-    description: "Premium pet beds, nutrition, apparel & toys with nationwide shipping across Pakistan.",
-  },
 };
 
 export default function RootLayout({
@@ -73,14 +70,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
       <body className="min-h-screen flex flex-col font-sans">
-        <CartProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <CartDrawer />
-          <QuickViewModal />
-          <ToastContainer />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <CartDrawer />
+            <QuickViewModal />
+            <ToastContainer />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

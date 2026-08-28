@@ -1,60 +1,71 @@
-﻿import { clsx, type ClassValue } from "clsx";
+import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPKR(amount: number): string {
-  return `Rs. ${Math.round(amount).toLocaleString('en-PK')}`;
-}
-
 export const VERIFIED_STORE_INFO = {
   name: "CoCo & Candy – Pet Accessories Shop",
   shortName: "CoCo & Candy",
-  tagline: "Premium Pet Accessories, Nutrition & Care Across Pakistan",
-  whatsappNumber: "+923001234567", // Tasteful placeholder clearly labeled if needed
-  whatsappDisplay: "+92 300 1234567",
-  phone: "+92 (42) 3578-9000",
-  email: "support@cocopetshop.pk",
-  address: "Shop #14, Galleria Arcade, Gulberg III, Lahore, Punjab, Pakistan",
-  businessHours: "Monday – Saturday: 10:00 AM – 9:00 PM | Sunday: 1:00 PM – 7:00 PM",
+  phone: "03457913191",
+  phoneFormatted: "+92 345 7913191",
+  whatsappNumber: "923457913191",
+  whatsappDisplay: "0345-7913191",
+  email: "info.ufarooq@gmail.com",
+  address: "Lahore Fulfillment Hub (Serving Lahore, Karachi, Islamabad & Nationwide Pakistan)",
+  businessHours: "Monday - Saturday: 9:00 AM - 9:00 PM (PKT)",
+  currency: "PKR",
+  currencySymbol: "Rs.",
+  facebookUrl: "https://web.facebook.com/cocopets",
+  pakistanStoreUrl: "https://cocopetshop.pk",
   freeShippingThreshold: 3500, // PKR
   standardShippingFee: 250, // PKR
-  expressShippingFee: 450, // PKR
-  verifiedReferencePakistan: "https://cocopetshop.pk",
-  verifiedFacebook: "https://web.facebook.com/cocopets",
 };
 
-export function buildWhatsAppOrderUrl(items: { name: string; quantity: number; price: number; variant?: string }[], total: number, customerName?: string, city?: string): string {
-  const cleanNumber = VERIFIED_STORE_INFO.whatsappNumber.replace(/[^0-9]/g, '');
-  let message = `🐾 *New Order Request - ${VERIFIED_STORE_INFO.name}*\n\n`;
-  
+export function formatPKR(amount: number): string {
+  return `Rs. ${amount.toLocaleString("en-PK")}`;
+}
+
+export function buildWhatsAppOrderUrl(
+  items: { name: string; quantity: number; price: number; variant?: string }[],
+  total: number,
+  customerName?: string,
+  customerCity?: string
+): string {
+  let message = `*Salam CoCo & Candy! I would like to place an order:*\n\n`;
+
   if (customerName) {
-    message += `👤 *Customer:* ${customerName}\n`;
+    message += `*Customer:* ${customerName}\n`;
   }
-  if (city) {
-    message += `📍 *City:* ${city}\n\n`;
+  if (customerCity) {
+    message += `*City:* ${customerCity}\n`;
+  }
+  if (customerName || customerCity) {
+    message += `\n`;
   }
 
-  message += `🛒 *Order Items:*\n`;
+  message += `*Items Ordered:*\n`;
   items.forEach((item, index) => {
-    message += `${index + 1}. *${item.name}* ${item.variant ? `(${item.variant})` : ''} x ${item.quantity} = ${formatPKR(item.price * item.quantity)}\n`;
+    const variantStr = item.variant ? ` (${item.variant})` : "";
+    message += `${index + 1}. ${item.name}${variantStr} x ${item.quantity} - Rs. ${(item.price * item.quantity).toLocaleString()}\n`;
   });
 
-  message += `\n💰 *Total Amount:* ${formatPKR(total)}\n`;
-  message += `\nHello! I would like to confirm this order. Please advise on delivery time & dispatch. Thank you!`;
+  message += `\n*Total Payable:* Rs. ${total.toLocaleString()}`;
+  message += `\n*Payment:* Cash on Delivery (COD)`;
+  message += `\n\nPlease confirm order dispatch. Thank you! 🐾`;
 
-  return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+  const encoded = encodeURIComponent(message);
+  return `https://wa.me/${VERIFIED_STORE_INFO.whatsappNumber}?text=${encoded}`;
 }
 
 export function buildWhatsAppInquiryUrl(productName?: string): string {
-  const cleanNumber = VERIFIED_STORE_INFO.whatsappNumber.replace(/[^0-9]/g, '');
-  let message = `Hello CoCo & Candy Team! 🐾\n`;
+  let message = `Salam CoCo & Candy Team! `;
   if (productName) {
-    message += `I'm interested in *${productName}*. Could you please provide more details on availability & shipping?`;
+    message += `I have an inquiry regarding *${productName}*. Could you please assist me with sizing and availability?`;
   } else {
-    message += `I have an inquiry regarding your pet products & accessories.`;
+    message += `I need some assistance with pet food / accessories recommendations.`;
   }
-  return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+  const encoded = encodeURIComponent(message);
+  return `https://wa.me/${VERIFIED_STORE_INFO.whatsappNumber}?text=${encoded}`;
 }

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { CATEGORIES } from "@/data/categories";
 import { PRODUCTS } from "@/data/products";
 import { formatPKR, VERIFIED_STORE_INFO, buildWhatsAppInquiryUrl } from "@/lib/utils";
@@ -20,11 +21,13 @@ import {
   Truck,
   ShieldCheck,
   Package,
+  User,
 } from "lucide-react";
 
 export function Header() {
   const router = useRouter();
   const { cartCount, wishlist, openCart, subtotal } = useCart();
+  const { user } = useAuth();
   const wishlistCount = wishlist.length;
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -101,14 +104,22 @@ export function Header() {
             </Link>
             <span className="text-slate-500">•</span>
             <a
+              href={VERIFIED_STORE_INFO.facebookUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-amber-300 transition-colors hidden sm:inline"
+            >
+              Facebook: @cocopets
+            </a>
+            <span className="text-slate-500 hidden sm:inline">•</span>
+            <a
               href={buildWhatsAppInquiryUrl()}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-amber-300 transition-colors flex items-center gap-1"
             >
               <MessageSquare className="w-3 h-3 text-emerald-400" />
-              <span className="hidden md:inline">WhatsApp: {VERIFIED_STORE_INFO.whatsappDisplay}</span>
-              <span className="md:hidden">WhatsApp</span>
+              <span>WhatsApp: {VERIFIED_STORE_INFO.phone}</span>
             </a>
           </div>
         </div>
@@ -196,8 +207,22 @@ export function Header() {
             )}
           </div>
 
-          {/* Right Utilities (Wishlist, Cart Badge, WhatsApp CTA) */}
+          {/* Right Utilities (Account, Wishlist, Cart Badge, WhatsApp CTA) */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Account Link */}
+            <Link
+              href={user ? "/account" : "/account/login"}
+              className="p-2.5 text-slate-700 hover:text-brand-900 hover:bg-slate-100 rounded-full transition-colors flex items-center gap-1"
+              title={user ? `Logged in as ${user.name}` : "Sign In / Register"}
+            >
+              <User className="w-5 h-5" />
+              {user && (
+                <span className="text-xs font-bold text-brand-900 hidden xl:inline">
+                  {user.name.split(" ")[0]}
+                </span>
+              )}
+            </Link>
+
             {/* Wishlist Link */}
             <Link
               href="/wishlist"
@@ -237,7 +262,7 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3.5 rounded-full shadow-sm transition-colors"
-              title="Chat with Pet Specialist on WhatsApp"
+              title="Chat on WhatsApp (03457913191)"
             >
               <MessageSquare className="w-4 h-4" />
               <span>WhatsApp</span>
@@ -309,7 +334,7 @@ export function Header() {
               <span className="text-slate-300">•</span>
               <span className="text-emerald-700 flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>100% Authentic Quality</span>
+                <span>Helpline: 0345-7913191</span>
               </span>
             </div>
           </div>
