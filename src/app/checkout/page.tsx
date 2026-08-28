@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -15,11 +15,7 @@ import {
   ArrowRight,
   Sparkles,
   ShoppingBag,
-  Building,
-  CreditCard,
-  Banknote,
   Home,
-  Check,
 } from "lucide-react";
 
 export default function CheckoutPage() {
@@ -64,7 +60,7 @@ export default function CheckoutPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.fullName || !formData.phone || !formData.address) {
       alert("Please fill in your name, phone number, and delivery address.");
@@ -73,56 +69,76 @@ export default function CheckoutPage() {
 
     setIsSubmitting(true);
 
-    // Simulate order placement
-    setTimeout(() => {
-      const orderId = `COCO-PK-${Math.floor(100000 + Math.random() * 900000)}`;
-      const orderInfo = {
-        orderId,
-        date: new Date().toLocaleDateString("en-PK", {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
+    try {
+      const orderItems = cart.map((item) => ({
+        productId: item.product.id,
+        productName: item.product.name,
+        image: item.product.images[0],
+        quantity: item.quantity,
+        price: item.product.price + (item.selectedVariant?.priceModifier || 0),
+        variantLabel: item.selectedVariant?.label,
+      }));
+
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerName: formData.fullName,
+          customerPhone: formData.phone,
+          customerWhatsApp: formData.whatsapp || formData.phone,
+          customerEmail: formData.email,
+          customerAddress: formData.address,
+          customerCity: formData.city,
+          customerNotes: formData.notes,
+          paymentMethod: formData.paymentMethod,
+          items: orderItems,
+          subtotal,
+          discount: discountAmount,
+          shipping: shippingAmount,
+          total,
+          couponCode: appliedCoupon?.code,
         }),
-        items: [...cart],
-        customer: { ...formData },
-        subtotal,
-        discount: discountAmount,
-        shipping: shippingAmount,
-        total,
-        appliedCoupon,
-      };
+      });
 
-      setCompletedOrder(orderInfo);
-      clearCart();
-      setIsSubmitting(false);
+      const data = await res.json();
+      if (data.success) {
+        setCompletedOrder(data.data);
+        clearCart();
 
-      // Trigger celebration confetti
-      try {
-        confetti({
-          particleCount: 120,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
-      } catch (err) {
-        // fallback if canvas not available
+        // Celebration confetti
+        try {
+          confetti({
+            particleCount: 120,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+        } catch (err) {
+          // ignore
+        }
+      } else {
+        alert(data.error || "Failed to process order.");
       }
-    }, 1000);
+    } catch (err: any) {
+      alert(err.message || "Error submitting order.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // If order is completed, display Order Confirmation Screen
   if (completedOrder) {
     const whatsappOrderItems = completedOrder.items.map((item: any) => ({
-      name: item.product.name,
+      name: item.productName,
       quantity: item.quantity,
-      price: item.product.price + (item.selectedVariant?.priceModifier || 0),
-      variant: item.selectedVariant?.label,
+      price: item.price,
+      variant: item.variantLabel,
     }));
 
     const confirmationWhatsAppUrl = buildWhatsAppOrderUrl(
       whatsappOrderItems,
       completedOrder.total,
-      completedOrder.customer.fullName,
-      completedOrder.customer.city
+      completedOrder.customerName,
+      completedOrder.customerCity
     );
 
     return (
@@ -135,37 +151,37 @@ export default function CheckoutPage() {
 
             <div>
               <span className="text-xs font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full">
-                Order Confirmed
+                Order Confirmed & Saved to Database
               </span>
               <h1 className="text-2xl sm:text-4xl font-black text-slate-950 font-display mt-2">
-                Thank You, {completedOrder.customer.fullName}!
+                Thank You, {completedOrder.customerName}!
               </h1>
               <p className="text-xs sm:text-sm text-slate-500 mt-2 max-w-md mx-auto">
-                Your pet accessories order has been placed successfully. Order ID:{" "}
-                <strong className="text-brand-900 font-mono text-sm">{completedOrder.orderId}</strong>
+                Your order is registered in our live database. Order Tracking ID:{" "}
+                <strong className="text-brand-900 font-mono text-sm">{completedOrder.orderNumber}</strong>
               </p>
             </div>
 
             {/* Order Details Card */}
             <div className="bg-slate-50 rounded-3xl p-6 text-left border border-slate-200/80 space-y-4 text-xs sm:text-sm">
               <div className="flex justify-between pb-3 border-b border-slate-200">
-                <span className="text-slate-500 font-medium">Delivery To:</span>
+                <span className="text-slate-500 font-medium">Delivery Destination:</span>
                 <span className="font-bold text-slate-900 text-right">
-                  {completedOrder.customer.address}, {completedOrder.customer.city}
+                  {completedOrder.customerAddress}, {completedOrder.customerCity}
                 </span>
               </div>
               <div className="flex justify-between pb-3 border-b border-slate-200">
                 <span className="text-slate-500 font-medium">Phone / WhatsApp:</span>
                 <span className="font-bold text-slate-900">
-                  {completedOrder.customer.phone}
+                  {completedOrder.customerPhone}
                 </span>
               </div>
               <div className="flex justify-between pb-3 border-b border-slate-200">
                 <span className="text-slate-500 font-medium">Payment Method:</span>
                 <span className="font-bold text-brand-900 uppercase">
-                  {completedOrder.customer.paymentMethod === "cod"
+                  {completedOrder.paymentMethod === "cod"
                     ? "Cash on Delivery (COD)"
-                    : completedOrder.customer.paymentMethod === "bank_transfer"
+                    : completedOrder.paymentMethod === "bank_transfer"
                     ? "Direct Bank Transfer"
                     : "WhatsApp Confirmation"}
                 </span>
@@ -176,7 +192,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Direct WhatsApp Confirmation Button */}
+            {/* Actions */}
             <div className="space-y-3 pt-2">
               <a
                 href={confirmationWhatsAppUrl}
@@ -188,13 +204,21 @@ export default function CheckoutPage() {
                 <span>Notify CoCo & Candy on WhatsApp (Fast-Track Dispatch)</span>
               </a>
 
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-brand-900 transition-colors pt-2"
-              >
-                <Home className="w-4 h-4" />
-                <span>Return to Home Page</span>
-              </Link>
+              <div className="flex items-center justify-center gap-4 pt-2">
+                <Link
+                  href={`/track-order`}
+                  className="text-xs font-bold text-brand-900 hover:underline"
+                >
+                  Track Order Online
+                </Link>
+                <span className="text-slate-300">•</span>
+                <Link
+                  href="/"
+                  className="text-xs font-bold text-slate-600 hover:text-brand-900"
+                >
+                  Return to Home
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -406,7 +430,6 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="space-y-3">
-                    {/* COD */}
                     <label
                       className={`flex items-start gap-3.5 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
                         formData.paymentMethod === "cod"
@@ -437,7 +460,6 @@ export default function CheckoutPage() {
                       </div>
                     </label>
 
-                    {/* Bank Transfer */}
                     <label
                       className={`flex items-start gap-3.5 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
                         formData.paymentMethod === "bank_transfer"
@@ -463,7 +485,6 @@ export default function CheckoutPage() {
                       </div>
                     </label>
 
-                    {/* WhatsApp Checkout */}
                     <label
                       className={`flex items-start gap-3.5 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
                         formData.paymentMethod === "whatsapp"
@@ -505,7 +526,6 @@ export default function CheckoutPage() {
                     </Link>
                   </h3>
 
-                  {/* Item List Preview */}
                   <div className="space-y-3 max-h-64 overflow-y-auto divide-y divide-slate-100 pr-1">
                     {cart.map((item, idx) => {
                       const itemPrice =
@@ -533,7 +553,6 @@ export default function CheckoutPage() {
                     })}
                   </div>
 
-                  {/* Calculations */}
                   <div className="space-y-2 text-xs text-slate-600 pt-3 border-t border-slate-100">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
@@ -564,14 +583,13 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  {/* Place Order CTA */}
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className="w-full bg-brand-900 hover:bg-brand-800 disabled:bg-slate-400 text-white font-extrabold text-sm py-4 px-6 rounded-2xl shadow-lg shadow-brand-900/20 transition-all flex items-center justify-center gap-2 group"
                   >
                     {isSubmitting ? (
-                      <span>Processing Order...</span>
+                      <span>Saving Order to Database...</span>
                     ) : (
                       <>
                         <ShieldCheck className="w-5 h-5" />

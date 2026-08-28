@@ -1,4 +1,4 @@
-﻿export interface Product {
+export interface Product {
   id: string;
   name: string;
   slug: string;
@@ -11,7 +11,7 @@
   rating: number;
   reviewsCount: number;
   inStock: boolean;
-  stockCount: number;
+  stockCount?: number;
   petType: 'dog' | 'cat' | 'all';
   featured?: boolean;
   isNew?: boolean;
@@ -66,6 +66,8 @@ export interface Coupon {
   discountPercent: number;
   description: string;
   minSpend?: number;
+  isActive?: boolean;
+  expiresAt?: string;
 }
 
 export interface OrderDetails {
