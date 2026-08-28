@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -225,15 +225,15 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
                 <Star
                   key={i}
                   className={`w-3 h-3 ${
-                    i < Math.floor(product.rating)
+                    i < Math.floor(product.rating || 5)
                       ? "fill-amber-400 text-amber-400"
                       : "text-slate-200"
                   }`}
                 />
               ))}
             </div>
-            <span className="text-[11px] font-bold text-slate-700">{product.rating}</span>
-            <span className="text-[10px] text-slate-400">({product.reviewsCount})</span>
+            <span className="text-[11px] font-bold text-slate-700">{product.rating ?? 5.0}</span>
+            <span className="text-[10px] text-slate-400">({product.reviewsCount ?? 0})</span>
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { notFound, useParams } from "next/navigation";
@@ -164,15 +164,15 @@ export default function ProductDetailPage() {
                       <Star
                         key={i}
                         className={`w-4 h-4 ${
-                          i < Math.floor(product.rating)
+                          i < Math.floor(product.rating || 5)
                             ? "fill-amber-400 text-amber-400"
                             : "text-slate-200"
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="text-xs font-bold text-slate-800">{product.rating}</span>
-                  <span className="text-xs text-slate-400">({product.reviewsCount} verified reviews)</span>
+                  <span className="text-xs font-bold text-slate-800">{product.rating ?? 5.0}</span>
+                  <span className="text-xs text-slate-400">({product.reviewsCount ?? 0} verified reviews)</span>
                   <span className="text-slate-300">•</span>
                   <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
                     {product.inStock ? "In Stock (Dispatching Daily)" : "Restocking Soon"}

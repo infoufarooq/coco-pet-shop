@@ -1,4 +1,4 @@
-﻿import { Product } from "@/types";
+import { Product, Coupon } from "@/types";
 
 export const PRODUCTS: Product[] = [
   {
@@ -588,7 +588,7 @@ export const PRODUCTS: Product[] = [
   }
 ];
 
-export const COUPONS = [
+export const COUPONS: Coupon[] = [
   {
     code: "COCOFIRST",
     discountPercent: 15,

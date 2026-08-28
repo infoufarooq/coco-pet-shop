@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -116,7 +116,7 @@ function ShopContent() {
       }
 
       // Rating
-      if (filters.rating > 0 && p.rating < filters.rating) {
+      if (filters.rating > 0 && (p.rating ?? 0) < filters.rating) {
         return false;
       }
 
@@ -124,7 +124,7 @@ function ShopContent() {
     }).sort((a, b) => {
       if (filters.sortBy === "price-low") return a.price - b.price;
       if (filters.sortBy === "price-high") return b.price - a.price;
-      if (filters.sortBy === "rating") return b.rating - a.rating;
+      if (filters.sortBy === "rating") return (b.rating ?? 0) - (a.rating ?? 0);
       if (filters.sortBy === "newest") return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
       return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
     });

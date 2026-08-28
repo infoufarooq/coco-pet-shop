@@ -37,20 +37,24 @@ export interface Product {
   price: number; // in PKR
   originalPrice?: number;
   discountPercent?: number;
-  rating: number;
-  reviewsCount: number;
+  rating?: number;
+  reviewsCount?: number;
   inStock: boolean;
   stockCount?: number;
+  stockQuantity?: number;
   petType: "dog" | "cat" | "all";
   featured?: boolean;
   isNew?: boolean;
   isBestSeller?: boolean;
   isOnSale?: boolean;
+  badge?: string;
+  animalType?: string;
   images: string[];
   description: string;
   features: string[];
   ingredientsOrMaterials?: string[];
   usageInstructions?: string;
+  specifications?: Record<string, unknown>;
   variants?: {
     type: "size" | "flavor" | "color" | "weight";
     options: {
@@ -62,6 +66,7 @@ export interface Product {
   weightOrVolume?: string;
   brand?: string;
   sku: string;
+  createdAt?: string;
 }
 
 export interface Category {
@@ -97,6 +102,7 @@ export interface Coupon {
   minSpend?: number;
   isActive?: boolean;
   expiresAt?: string;
+  usageCount?: number;
 }
 
 export interface OrderRecord {
@@ -155,14 +161,18 @@ export interface OrderDetails {
 
 export interface Review {
   id: string;
-  author: string;
-  city: string;
-  petName?: string;
-  rating: number;
-  date: string;
+  productId: string;
+  authorName: string;
+  rating: number; // 1 to 5
   title: string;
   comment: string;
-  verifiedBuyer: boolean;
-  productId?: string;
+  isVerifiedPurchase: boolean;
+  createdAt: string;
+  // UI & backwards compatibility fields
+  author?: string;
+  city?: string;
+  petName?: string;
+  date?: string;
+  verifiedBuyer?: boolean;
   avatarUrl?: string;
 }

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -145,15 +145,15 @@ export function QuickViewModal() {
                     <Star
                       key={i}
                       className={`w-4 h-4 ${
-                        i < Math.floor(product.rating)
+                        i < Math.floor(product.rating || 5)
                           ? "fill-amber-400 text-amber-400"
                           : "text-slate-200"
                       }`}
                     />
                   ))}
                 </div>
-                <span className="text-xs font-bold text-slate-800">{product.rating}</span>
-                <span className="text-xs text-slate-400">({product.reviewsCount} verified reviews)</span>
+                <span className="text-xs font-bold text-slate-800">{product.rating ?? 5.0}</span>
+                <span className="text-xs text-slate-400">({product.reviewsCount ?? 0} verified reviews)</span>
               </div>
 
               {/* Price */}
