@@ -1,0 +1,49 @@
+Build and deploy a polished, responsive e-commerce website for **CoCo & Candy – Pet Accessories Shop** on Vercel.
+
+Use these as the authoritative brand references, in this priority order:
+
+1. Facebook: https://web.facebook.com/cocopets
+2. Pakistan store: https://cocopetshop.pk
+3. UK-related site for visual inspiration only: https://www.cocopet.co.uk/
+
+Before building, inspect the Facebook page and the Pakistan site. Reuse only public, clearly verified assets and details:
+- Logo/profile image and cover imagery
+- Product photos, categories, wording, and brand colors
+- Store phone/WhatsApp number, email, address, business hours, and social links
+- Product names and prices, if publicly listed
+
+Do not invent contact details, claims, prices, or policies. If an item cannot be verified, use a tasteful placeholder and label it clearly for later replacement. Do not treat the UK site as the Pakistan business unless brand ownership and contact details match.
+
+Design direction:
+- Build around the existing Coco/CoCo & Candy visual identity discovered from the sources.
+- Create a friendly, premium pet-accessories feel: warm neutrals, playful accents, rounded cards, high-quality pet imagery, clear typography, and generous whitespace.
+- Preserve the real logo and imagery where permitted; optimize images for fast loading.
+- Make the site fully responsive, accessible, and polished on mobile first.
+
+Pages:
+- Home: brand hero, key pet categories, featured products, promotional section, why shop with us, social proof, newsletter, and verified contact details.
+- Shop: searchable and filterable product catalog with categories such as food, toys, beds, grooming, collars/leashes, carriers, and accessories—adapt categories to the actual business inventory.
+- Product detail: gallery, price, description, variants where needed, quantity control, add-to-cart, delivery details, and related products.
+- Cart: persistent local cart, item quantity controls, subtotal, delivery note, and checkout/WhatsApp order CTA.
+- About: real business story and values, based only on verified source content.
+- Contact: verified phone/WhatsApp, email, address, business hours, embedded map if an address is verified, and a validated contact form.
+- Policies/FAQ: delivery, exchanges, payments, and FAQs; use placeholders where policies are not publicly available.
+
+Functional requirements:
+- Use Next.js, TypeScript, and Tailwind CSS.
+- Use reusable components, clean project structure, semantic HTML, and accessible keyboard controls.
+- Store catalog data locally for this first version.
+- Implement local-storage cart functionality; no live payment gateway is required.
+- Include WhatsApp ordering only if the number is verified from the Coco sources.
+- Add SEO metadata, Open Graph image, sitemap, favicon, and basic analytics-ready structure.
+- Use subtle motion only; maintain excellent performance and image optimization.
+
+Quality checks:
+- Run a production build successfully.
+- Test desktop and mobile layouts, navigation, product filtering, cart persistence, and empty states.
+- Add a README explaining local setup, environment variables if any, content replacement, and deployment.
+
+Deployment:
+- Initialize Git if necessary.
+- Deploy the finished production site to Vercel.
+- Provide the live Vercel URL and repository URL, if a repository is created.
