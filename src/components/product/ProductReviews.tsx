@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Review } from "@/types";
-import { useCart } from "@/context/CartContext";
+import { CartContext } from "@/context/CartContext";
 import {
   Star,
   ShieldCheck,
@@ -28,13 +28,7 @@ export function ProductReviews({
   initialRating = 5,
   initialReviewsCount = 0,
 }: ProductReviewsProps) {
-  const cartContext = (() => {
-    try {
-      return useCart();
-    } catch {
-      return null;
-    }
-  })();
+  const cartContext = useContext(CartContext);
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);

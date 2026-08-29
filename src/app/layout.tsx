@@ -9,6 +9,7 @@ import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { QuickViewModal } from "@/components/cart/QuickViewModal";
 import { ToastContainer } from "@/components/common/Toast";
+import { OrganizationJsonLd } from "@/components/common/JsonLd";
 import { VERIFIED_STORE_INFO } from "@/lib/utils";
 
 const inter = Inter({
@@ -71,6 +72,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
       <body className="min-h-screen flex flex-col font-sans">
+        <OrganizationJsonLd />
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>

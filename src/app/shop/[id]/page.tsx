@@ -5,10 +5,12 @@ import { notFound, useParams } from "next/navigation";
 import Link from "next/link";
 import { PRODUCTS } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { formatPKR, buildWhatsAppOrderUrl, VERIFIED_STORE_INFO } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductReviews } from "@/components/product/ProductReviews";
+import { ProductJsonLd, BreadcrumbJsonLd } from "@/components/common/JsonLd";
 import {
   Star,
   ShoppingBag,
@@ -28,7 +30,15 @@ import {
 
 export default function ProductDetailPage() {
   const params = useParams();
-  const productId = params?.id as string;
+  const productId = (params?.id as string) || "";
+
+  const { addToCart, showToast } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
+  const [selectedImgIndex, setSelectedImgIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState<"overview" | "specs" | "reviews">("overview");
 
   const product = PRODUCTS.find((p) => p.id === productId || p.slug === productId);
 
@@ -36,13 +46,7 @@ export default function ProductDetailPage() {
     return notFound();
   }
 
-  const { addToCart, toggleWishlist, isInWishlist, showToast } = useCart();
   const isWishlisted = isInWishlist(product.id);
-
-  const [selectedImgIndex, setSelectedImgIndex] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState<"overview" | "specs" | "reviews">("overview");
 
   const selectedVariant = product.variants?.options[selectedVariantIndex]
     ? {
@@ -79,17 +83,20 @@ export default function ProductDetailPage() {
     (p) => p.categorySlug === product.categorySlug && p.id !== product.id
   ).slice(0, 4);
 
+  const breadcrumbItems = [
+    { label: "Shop", href: "/shop" },
+    { label: product.category, href: `/shop?category=${product.categorySlug}` },
+    { label: product.name },
+  ];
+
   return (
     <div className="bg-slate-50 min-h-screen py-6 sm:py-10">
+      <ProductJsonLd product={product} />
+      <BreadcrumbJsonLd items={breadcrumbItems} />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
-        <Breadcrumbs
-          items={[
-            { label: "Shop", href: "/shop" },
-            { label: product.category, href: `/shop?category=${product.categorySlug}` },
-            { label: product.name },
-          ]}
-        />
+        <Breadcrumbs items={breadcrumbItems} />
 
         {/* Main Product Stage */}
         <div className="bg-white rounded-4xl border border-slate-200/80 p-6 sm:p-10 shadow-sm my-6">
